@@ -1541,7 +1541,13 @@ This program, [mlfq.py](mlfq.py), allows you to see how the MLFQ scheduler prese
 
 ## Conclusions
 
-Coloque aqui las conclusiones...
+Prioridades y degradación: En una configuración MLFQ con múltiples colas, los procesos que consumen todo su quantum sin realizar I/O son rápidamente degradados a colas de menor prioridad, donde reciben menos atención del CPU. Esto se observa en los ejemplos donde procesos CPU-bound son superados por procesos más cortos o con I/O frecuente.
+
+Ventaja de I/O y reglas antiguas (-S): Usar el flag -S (que activa las reglas antiguas 4a y 4b) permite a un proceso que realiza I/O justo antes de terminar su quantum mantener su prioridad alta. Esto puede explotarse para obtener una proporción desmedida del CPU (hasta 99%), especialmente si otros procesos no realizan I/O.
+
+Prevención de starvation con boosting (-B): Un proceso que ha sido degradado a la cola más baja puede quedar "olvidado" sin acceso real al CPU. Para evitar esto, se puede usar el flag -B para aplicar un boost periódico. Por ejemplo, con boosting cada 200 ms y un quantum de 10 ms, se garantiza que el proceso reciba al menos un 5% del CPU.
+
+Ubicación tras I/O y flag -I: El flag -I modifica la política de reingreso tras una operación de I/O. Si se activa, el job vuelve al inicio de su cola de prioridad, lo que puede darle una ventaja significativa sobre otros procesos en espera. Sin -I, el job se añade al final de la cola, compitiendo en igualdad.
 
 ### Criterios de evaluación
 
